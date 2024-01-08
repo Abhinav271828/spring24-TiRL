@@ -25,6 +25,14 @@ Notes and resources for the Topics in Reinforcement Learning course at IIIT Hyde
             - Reward Model
             - Policy
         - Classification of RL Problems
+* Lecture 2 (08 Jan, Mon)
+    - Probability Theory
+        - $\sigma$-algebras as Domains for Probability
+        - Conditional Probability
+        - Independence & Mutual Exclusivity
+        - Random Variable
+        - Expectation, Moments, Variance
+        - Multiple Random Variables
 
 # Grading Policy
 * Quiz-1: 10%
