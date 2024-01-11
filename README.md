@@ -33,6 +33,11 @@ Notes and resources for the Topics in Reinforcement Learning course at IIIT Hyde
         - Random Variable
         - Expectation, Moments, Variance
         - Multiple Random Variables
+* Lecture 3 (11 Jan, Thu)
+    - Probability Theory (contd.)
+        - Sampling from Continuous RVs
+        - Convergence of RVs
+        - Interchanging Limits and Expectation
 
 # Grading Policy
 * Quiz-1: 10%
