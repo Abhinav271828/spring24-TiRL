@@ -38,6 +38,12 @@ Notes and resources for the Topics in Reinforcement Learning course at IIIT Hyde
         - Sampling from Continuous RVs
         - Convergence of RVs
         - Interchanging Limits and Expectation
+* Lecture 4 (18 Jan, Thu)
+    - Markov Chains
+        - Discrete-Time Markov Chains
+        - Chapman-Kolmogorov Equations for DTMC
+        - Classification of States
+        - Limiting Probabilities
 
 # Grading Policy
 * Quiz-1: 10%
