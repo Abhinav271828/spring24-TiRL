@@ -44,6 +44,11 @@ Notes and resources for the Topics in Reinforcement Learning course at IIIT Hyde
         - Chapman-Kolmogorov Equations for DTMC
         - Classification of States
         - Limiting Probabilities
+* Lecture 5 (20 Jan, Sat)
+    - Markov Chains (contd.)
+        - Markov Chains as Recursions
+        - Markov Reward Process
+        - Deterministic Dynamic Programming
 
 # Grading Policy
 * Quiz-1: 10%
