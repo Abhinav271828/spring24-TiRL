@@ -49,6 +49,12 @@ Notes and resources for the Topics in Reinforcement Learning course at IIIT Hyde
         - Markov Chains as Recursions
         - Markov Reward Process
         - Deterministic Dynamic Programming
+* Lecture 6 (22 Jan, Mon)
+    - Markov Chains
+        - Deterministic Dynamic Programming (contd.)
+        - Stochastic Dynamic Programming
+            - Types of Policies
+            - Evaluating a Policy
 
 # Grading Policy
 * Quiz-1: 10%
