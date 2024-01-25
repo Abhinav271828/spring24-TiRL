@@ -2,7 +2,7 @@
 title: Topics in Reinforcement Learning
 subtitle: |
           | Spring 2024, IIIT Hyderabad
-          | 20 January, Saturday (Lecture 5)
+          | 22 January, Monday (Lecture 6)
 author: Taught by Prof. Tejas Bodas
 ---
 

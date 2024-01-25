@@ -55,6 +55,13 @@ Notes and resources for the Topics in Reinforcement Learning course at IIIT Hyde
         - Stochastic Dynamic Programming
             - Types of Policies
             - Evaluating a Policy
+* Lecture 7 (25 Jan, Thu)
+    - Markov Chains
+        - Stochastic Dynamic Programming
+            - Evaluating a Policy (contd.)
+            - Subproblems
+            - Bellman Optimality Equations
+            - Q-Function Formulation
 
 # Grading Policy
 * Quiz-1: 10%
