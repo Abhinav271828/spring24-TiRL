@@ -40,7 +40,7 @@ where
 $$\mathcal{H}_t = \{S_1, A_1, \dots, S_t, A_t\}$$
 is the history, and $W_t$ represents a potential source of randomness.
 
-A category of transition models that eliminate the dependence on history is, Markovian transition models, are usually denoted
+A category of transition models that eliminate the dependence on history, Markovian transition models, are usually denoted
 $$S_{t+1} = f(S_t, A_t, W_t),$$
 where $W_t$ is i.i.d noise.
 

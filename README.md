@@ -62,6 +62,14 @@ Notes and resources for the Topics in Reinforcement Learning course at IIIT Hyde
             - Subproblems
             - Bellman Optimality Equations
             - Q-Function Formulation
+* Lecture 8 (01 Feb, Thu)
+    - [MISSED]
+* Lecture 9 (05 Feb, Mon)
+    - Markov Chains
+        - Policy Evaluation
+            - Constructing the Optimal Policy
+            - Improving a Policy
+            - Convergence
 
 # Grading Policy
 * Quiz-1: 10%
