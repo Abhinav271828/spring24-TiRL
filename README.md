@@ -70,6 +70,14 @@ Notes and resources for the Topics in Reinforcement Learning course at IIIT Hyde
             - Constructing the Optimal Policy
             - Improving a Policy
             - Convergence
+* Lecture 10 (08 Feb, Thu)
+    - Markov Chains
+        - Contraction Mapping
+            - Optimality Operator
+        - Value Iteration
+            - Gaus-Seidel or In-Place Value Iteration
+            - Asynchronous Value Iteration
+        - Modified Policy Iteration
 
 # Grading Policy
 * Quiz-1: 10%
