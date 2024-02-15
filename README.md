@@ -78,6 +78,11 @@ Notes and resources for the Topics in Reinforcement Learning course at IIIT Hyde
             - Gaus-Seidel or In-Place Value Iteration
             - Asynchronous Value Iteration
         - Modified Policy Iteration
+* Lecture 11 (15 Feb, Thu)
+    - Reinforcement Learning
+        - Model-Based Learning
+        - Model-Free Learning
+        - Framework and Notation
 
 # Grading Policy
 * Quiz-1: 10%
