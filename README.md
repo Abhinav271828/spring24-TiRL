@@ -83,6 +83,18 @@ Notes and resources for the Topics in Reinforcement Learning course at IIIT Hyde
         - Model-Based Learning
         - Model-Free Learning
         - Framework and Notation
+    - Model-Free Strategies
+        - Policy Evaluation
+            - Naive Policy Evaluation
+* Lecture 12 (19 Feb, Mon)
+    - Model-Free Strategies
+        - Policy Evaluation (contd.)
+            - First-Visit Policy Evaluation
+            - Every-Visit Policy Evaluation
+            - Estimates for State-Action Pairs
+        - Policy Improvement
+            - Monte Carlo Control with Exploring Starts
+            - MC Control without Exploring Starts
 
 # Grading Policy
 * Quiz-1: 10%

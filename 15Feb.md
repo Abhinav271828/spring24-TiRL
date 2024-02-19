@@ -30,7 +30,7 @@ The task we consider may be infinite horizon, or episodic (finite horizon) in na
 The agent may be directly interacting with an environment or a simulator, or collecting actual rewards and employing policies real-time (online learning). On the other hand, the agent may be a passive entity with data about $(S_t, A_t, R_t, S_{t+1})$ (offline learning).
 
 # Model-Free Strategies
-## Model-Free Prediction
+## Policy Evaluation
 We know that the value of a policy $\pi$ in an infinite horizon discounted MDP setting is given by
 $$\begin{align*}
 V^\pi(s) &= \mathbb{E}\left[\sum_{t=0}^\infty \alpha^t r(s_t, \pi(s_t) \mid s_0 = s)\right] \\
@@ -38,6 +38,7 @@ V^\pi(s) &= \mathbb{E}\left[\sum_{t=0}^\infty \alpha^t r(s_t, \pi(s_t) \mid s_0 
 \end{align*}$$
 For an episodic problem, the summation goes up to time $T$ instead of infinity.
 
+### Naive Policy Evaluation
 Our goal here is to estimate $V^\pi(s)$ for the policy $\pi$.
 
 In the episodic case, we start in state $s_0$, run the task until the end, and then calculate the reward as
@@ -48,3 +49,5 @@ In incremental form,
 $$\hat{V}_k(s) = \hat{V}_{k-1}(s) + \frac1k(G_0^k - \hat{V}_{k-1}(s)).$$
 
 A similar process can be followed to estimate $Q^\pi(s, a)$.
+
+To avoid the discount factor $\frac1k$ vanishing, we sometimes use a different function $\alpha_k$ as the discount.
