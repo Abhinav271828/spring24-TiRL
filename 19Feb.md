@@ -48,7 +48,8 @@ This converges, apparently (ICLR 2023).
 ### MC Control without Exploring Starts
 If we do not use exploring starts, we need to ensure coverage of the state-action space during the episode itself. We achieve this by using *soft policies*, *i.e.*, policies for which $\pi(a \mid s) > 0$ for all $a \in \mathcal{A}$ and $s \in \mathcal{S}$.
 
-Furthermore, we use $\varepsilon$-greedy updates rather than simple greedy ones. In this case, we let
+### $\varepsilon$-Greedy Updates
+We may also use $\varepsilon$-greedy updates rather than simple greedy ones. In this case, we let
 $$\pi'(s) = \begin{cases}
 \argmax_{a \in \mathcal{A}} Q^\pi(s, a) & \text{with probability } 1 - \varepsilon; \\
 \text{random } a \in \mathcal{A} & \text{with probability } \varepsilon.

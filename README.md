@@ -2,11 +2,11 @@
 Notes and resources for the Topics in Reinforcement Learning course at IIIT Hyderabad.
 
 # Course Outline
-- [ ] Module 1
+- [x] Module 1
     - Motivation
     - Probability
     - Markov Chains
-- [ ] Module 2
+- [x] Module 2
     - Markov Decision Processes
 - [ ] Module 3
     - Introduction to Reinforcement Learning
@@ -85,7 +85,7 @@ Notes and resources for the Topics in Reinforcement Learning course at IIIT Hyde
         - Framework and Notation
     - Model-Free Strategies
         - Policy Evaluation
-            - Naive Policy Evaluation
+            - Initial-State Policy Evaluation
 * Lecture 12 (19 Feb, Mon)
     - Model-Free Strategies
         - Policy Evaluation (contd.)
@@ -95,6 +95,13 @@ Notes and resources for the Topics in Reinforcement Learning course at IIIT Hyde
         - Policy Improvement
             - Monte Carlo Control with Exploring Starts
             - MC Control without Exploring Starts
+            - $\varepsilon$-Greedy Updates
+* Lecture 13 (22 Feb, Thu)
+    - Model-Free Strategies
+        - Policy Evaluation (contd.)
+            - Temporal Difference Prediction
+        - Policy Improvement (contd.)
+            - SARSA (On-Policy TD Control)
 
 # Grading Policy
 * Quiz-1: 10%
