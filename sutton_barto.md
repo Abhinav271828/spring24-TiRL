@@ -29,6 +29,11 @@ numbersections: true
         - Returns and Episodes
         - Policies and Value Functions
     - Bellman Equations: $v_\pi; q_\pi; v_*; q_*$
+* Dynamic Programming
+    - Policy Evaluation
+    - Policy Improvement
+    - Policy Iteration
+    - Value Iteration
 
 # Multi-Armed Bandits
 RL uses training information that provides evaluative rather than instructive feedback – this creates the need for exploration.  
@@ -178,3 +183,48 @@ Note that such a procedure is rarely applicable in real-life scenarios, because 
 * we accurately know the dynamics of the environment;
 * we can feasibly solve the Bellman equations symbolically;
 * the system is Markovian.
+
+# Dynamic Programming
+DP methods are used to compute optimal policies given a perfect model of the environment as an MDP. While this is unrealistic, the study of DP algorithms is the basis for more advanced RL methods that rely on fewer assumptions.
+
+## Policy Evaluation (Prediction)
+We have seen the Bellman equation for finding the value function of a policy $\pi$:
+$$v_\pi(s) = \sum_{a \in \mathcal{A}(s)}\pi(a \mid s)\sum_{s', r} p(s', r \mid s, a)[r + \gamma v_\pi(s')].$$
+
+We can treat this equation as an update equation, starting with an arbitrary function $v_0$:
+$$v_{k+1}(s) = \sum_a \pi(a \mid s) \sum_{s', r} p(s', r \mid s, a) [r + \gamma v_k(s')].$$
+Then $v_\pi$ is a fixpoint of this rule, and it can be shown that this rule converges to it.  
+In implementation, one may also update the state values in place, so that sometimes the new values are used on the RHS instead of the old; this version of the algorithm converges even faster.
+
+## Policy Improvement
+If the process is in state $s$, should we follow the current policy $\pi$ or not? One way of checking this is to examine the value of
+$$q_\pi(s, a) = \sum_{s', r} p(s', r \mid s, a) [r + \gamma v_pi(s')],$$
+for $a \neq \pi(s)$, and if it is greater than $v_\pi(s)$, we can pick $a$ instead of $\pi(s)$.
+
+This is a special case of the policy improvement theorem: If $\pi$ and $\pi'$ are deterministic policies such that
+$$q_\pi(s, pi'(s)) \geq v_\pi(s)$$
+for all $s \in \mathcal{S}$, then
+$$v_{\pi'}(s) \geq v_\pi(s)$$
+for all $s \in \mathcal{S}$.
+
+Following this line of reasoning, one way of (greedily) updating policies is to define
+$$\pi'(s) = \operatorname*{argmax}_a q_\pi(s, a).$$
+It can be proved that this only fails to improve upon $\pi$ when it is already optimal.
+
+## Policy Iteration
+The two above procedures give us a general method to find the optimal policy – repeatedly evaluate the policy, and use the value function to find a better policy, until we reach the optimal one.
+
+## Value Iteration
+It is possible to optimize the policy iteration process via *value iteration*:
+$$v_{k+1}(s) = \max_a\sum_{s', r} p(s', r \mid s, a)[r + \gamma v_k(s')].$$
+
+This effectively combines, in one sweep, one sweep each of policy evaluation and policy improvement. This converges much faster than policy iteration.
+
+## Asynchronous Dynamic Programming
+Sweeps of the state set may be prohibitively expensive; *asynchronous* DP algorithms are in-place algorithms that do not have this limitation. They update the state values in any order, using the available values of other states. They converge as long as each state is updated (asymptotically) infinitely often.
+
+## Generalized Policy Iteration
+Generalized policy iteration (GPI) refers to the general idea of letting policy-evaluation and policy-improvement processes interact, at any level of granularity. The method we have seen lets each process complete before starting the next one; we may also interleave them at the state level.
+
+## Efficiency of Dynamic Programming
+DP methods work in polynomial time (in the number of states and actions). This is much better than any direct search in policy space. Furthermore, they have wider applicability than linear programming methods.
