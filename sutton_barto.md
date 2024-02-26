@@ -51,6 +51,11 @@ numbersections: true
     - Expected Sarsa
     - Double Learning
     - Games, Afterstates
+* $n$-Step Bootstrapping
+    - $n$-Step TD Prediction
+    - $n$-Step Sarsa: On-Policy Control
+    - $n$-Step Off-Policy Learning
+    - $n$-Step Tree Backup
 
 # Multi-Armed Bandits
 RL uses training information that provides evaluative rather than instructive feedback – this creates the need for exploration.  
@@ -472,3 +477,62 @@ In some cases, we have complete knowledge of the state of the system after takin
 The principles developed above (GPI; on- or off-policy; double learning) apply equally to afterstate methods.
 
 # $n$-Step Bootstrapping
+$n$-Step TD methods are a generalization of MC and one-step TD methods. The benefit of this method is that it allows you to slow down bootstrapping (as it is most effective over longer periods), while still changing the action at every time step.
+
+## $n$-Step TD Prediction
+We have seen that MC methods rely on the entire sequence of rewards until the completion of the episode, while TD(0) simply uses the existing update as a proxy along with one future reward (bootstraps). A natural intermediate process would be to consider some finite number of future rewards, but not go all the way to the end of the episode – this is the idea behind $n$-step TD methods.
+
+Thus, the generalized target is
+$$G_{t:t+n} = R_{t+1} + \gamma R_{t+2} + \cdots + \gamma^{n-1}R_{t+n} + \gamma^nV_{t+n-1}(S_{t+n}),$$
+which is an apprxoimation of the full return for any $n$.
+
+Note that any algorithm using this estimate has to wait $n$ timesteps to update:
+$$V_{t+n}(S_t) = V_{t+n-1}(S_t) + \alpha[G_{t:t+n} - V_{t+n-1}(S_t)].$$
+
+The $n$-step returns have what is called the error-reduction property:
+$$\max_s |\mean{\pi}{G_{t:t+n \mid S_t = s} - v_\pi(s)} \leq \gamma^n \max_s |V_{t+n-1}(s)-v_\pi(s)|.$$
+
+Thus these methods converge to the correct predictions.
+
+## $n$-Step Sarsa: On-Policy Control
+For Sarsa, we redefine $n$-step returns in terms of action values:
+$$G_{t:t+n} = R_{t+1} + \gamma R_{t+2} + \cdots + \gamma^{n-1}R_{t+n} + \gamma^nQ_{t+n-1}(S_{t+n}, A_{t+n}).$$
+Then we naturally have
+$$Q_{t+n}(S_t, A_t) = Q_{t+n-1}(S_t, A_t) + \alpha[G_{t:t+n} - Q_{t+n-1}(S_t, A_t)].$$
+
+For expected Sarsa, we define the target as
+$$G_{t:t+n} = R_{t+1} + \cdots + \gamma^{n-1}R_{t+n} + \gamma^n\bar{V}_{t+n-1}(S_{t+n}),$$
+where
+$$\bar{V}_t(s) = \sum_a \pi(a \mid s)Q_t(s, a).$$
+
+## $n$-Step Off-Policy Learning
+To make a simple off-policy version of $n$-step TD, we can just weight the update by the importance sampling ratio:
+$$V_{t+n}(S_t) = V_{t+n-1}(S_t) + \alpha\rho_{t:t+n-1}[G_{t:t+n} - V_{t+n-1}(S_t)],$$
+where
+$$\rho_{t:h} = \prod_{k=t}^{\min(h,T-1)}\frac{\pi(A_k \mid S_k)}{b(A_k \mid S_k)}.$$
+
+This can be extended to Sarsa in the natural way:
+$$Q_{t+n}(S_t, A_t) = Q_{t+n-1}(S_t, A_t) + \alpha\rho_{t+1:t+n}[G_{t:t+n} - Q_{t+n-1}(S_t, A_t)].$$
+Note that the importance sampling ratio starts and ends one step later, since we are updating a state-action pair.
+
+In the case of expected Sarsa, the equation would of course have the modified definition of $G$ that we have seen above; furthermore, the importance sampling ratio would only be $\rho_{t+1:t+n-1}$ as the action actually taken is unimportant, since we take the average over all actions.
+
+## Off-Policy Learning without Importance Sampling: The $n$-Step Tree Backup Algorithm
+We can implement an off-policy algorithm without importance sampling using the tree backup method.
+
+Consider a tree of states and actions up to a depth $n$. At each point, the actions not taken create "dangling" nodes. We include these in the estimate of the value, by weighting them with their probability of occurring under policy $\pi$. The actual actions taken do not contribute.
+
+Concretely, the $n = 1$ case gives us the target
+$$G_{t:t+1} = R_{t+1} + \gamma\sum_a \pi(a \mid S_{t+1}) Q_t(S_{t+1}, a).$$
+The $n = 2$ case gives us
+\begin{align*}
+G_{t:t+2} = R_{t+1} + \gamma\sum_{a \neq A_{t+1}}&\pi(a \mid S_{t+1})Q_{t+1}(S_{t+1}, a) \\
++ \gamma &\pi(A_{t+1} \mid S_{t+1})\left(R_{t+2} + \gamma\sum_a \pi(a \mid S_{t+2}) Q_{t+1}(S_{t+2}, a)\right).
+\end{align*}
+
+Thus we have the recursive definition
+$$G_{t:t+n} = R_{t+1} + \gamma\sum_{a \neq A_{t+1}}\pi(a \mid S_{t+1})Q_{t+n-1}(S_{t+1}, a) + \gamma\pi(A_{t+1} \mid S_{t+1})G_{t+1:t+n},$$
+and the update rule
+$$Q_{t+n}(S_t, A_t) = Q_{t+n-1}(S_t, A_t) + \alpha[G_{t:t+n} - Q_{t+n-1}(S_t, A_t)].$$
+
+This rule is applied at each step of the episode, followed by an update of $\pi$ to ensure that it is greedy w.r.t $Q$.
