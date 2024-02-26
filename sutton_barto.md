@@ -43,6 +43,14 @@ numbersections: true
         - Importance Sampling
         - Incremental Implementation
     - Off-Policy Control
+* Temporal-Difference Learning
+    - TD Prediction
+    - Advantages, Optimality of TD(0)
+    - Sarsa (on-policy TD control)
+    - Q-Learning (off-policy TD control)
+    - Expected Sarsa
+    - Double Learning
+    - Games, Afterstates
 
 # Multi-Armed Bandits
 RL uses training information that provides evaluative rather than instructive feedback – this creates the need for exploration.  
@@ -379,3 +387,88 @@ Then, update $\pi$ according to the current estimate of $Q$.
 A potential problem with this method is that it only learns from the tails of episodes which only contain greedy actions. This can make learning extremely slow, particularly when nongreedy actions are common.
 
 # Temporal-Difference Learning
+TD learning is a combination of MC and DP ideas – it enables learning directly from experience, without a model of the environment, at the same time utilizing bootstrapping to update estimates.
+
+## TD Prediction
+Both TD and MC methods update their estimate $V$ of $v_\pi$ for the nonterminal states $S_t$ in that experience. While MC methods wait to know the return $G_t$ following the visit, *e.g.*,
+$$V(S_t) \leftarrow V(S_t) + \alpha[G_t - V(S_t)]$$
+(which we call *constant-$\alpha$* MC), TD methods wait only until the next step, using previous estimates for their updates. For example,
+$$V(S_t) \leftarrow V(S_t) + \alpha[R_{t+1} + \gamma V(S_{t+1}) - V(S_t)].$$
+
+This can be done at each step of the episode.
+
+Effectively, we estimate the target to be $R_{t+1} + \gamma V(S_{t+1})$. This is called one-step TD, or TD(0).  
+TD therefore combines the sampling of MC with the bootstrapping of DP.
+
+The term in brackets is the error, which we see throughout RL:
+$$\delta_t = R_{t+1} + \gamma V(S_{t+1}) - V(S_t),$$
+which is computable at timestep $t+1$.
+
+Since the array $V$ does not change during the episode in MC methods, the MC error can be written as the sum of TD errors:
+\begin{align*}
+G_t - V(S_t) &= R_{t+1} + \gamma G_{t+1} - V(S_t) + \gamma V(S_{t+1}) - \gamma V(S_{t+1}) \\
+&= \delta_t + \gamma(G_{t+1} - V(S_{t+1})) \\
+&= \sum_{k=t}^{T-1}\gamma^{k-t}\delta_k.
+\end{align*}
+
+## Advantages of TD Prediction Methods
+One obvious advantage of TD models is that they do not require a model of the environment.
+
+They are also naturally implemented in an online, incremental fashion. This avoids the consideration of long episodes, continual tasks and episodes which include experimental actions.
+
+TD(0) also converges to $v_\pi$ with probability 1. In practice, this has even found to be faster than constant-$\alpha$ MC methods.
+
+## Optimality of TD(0)
+Suppose that only a finite amount of experience is available. In this case, we may present the experience repeatedly until the method converges. Thus the current estimate $V$ is changed only once per pass (over the experience), by the sum of all the increments. This is called batch updating.
+
+Under batch updating, TD(0) converges to a single answer (as long as $\alpha$ is sufficiently small); constant-$\alpha$ MC also converges under similar conditions, but to a different answer.
+
+In fact, constant-$\alpha$ MC converges to the sample average of the actual returns, *i.e.*, the estimates that minimize RMS error on the training data. TD(0), on the other hand, finds the maximum-likelihood estimate of the data.
+
+## Sarsa: On-Policy TD Control
+As usual, we follow the idea of GPI, only this time using TD methods for evaluation and prediction. In this section, we consider on-policy control.
+
+The first step is to learn an action-value function for the current policy:
+$$Q(S_t, A_t) \leftarrow Q(S_t, A_t) + \alpha[R_{t+1} + \gamma Q(S_{t+1}, A_{t+1}) - Q(S_t, A_t)].$$
+This uses every element from the quintuple $(S_t, A_t, R_{t+1}, S_{t+1}, A_{t+1})$.
+
+It is straightforward to use this update in a GPI-style algorithm that continually estimates $q_\pi$ and updates $\pi$ simultaneously.
+
+Sarsa converges with probability 1 to an optimal policy as long as all state-value pairs are visited infinitely often and the policy converges to the greedy policy.
+
+## Q-Learning: Off-Policy TD Control
+The development of Q-learning, an off-policy TD algorithm, was one of the early breakthroughs in RL. This is defined by
+$$Q(S_t, A_t) \leftarrow Q(S_t, A_t) + \alpha[R_{t+1} + \gamma \max_a Q(S_{t+1}, a) - Q(S_t, A_t)].$$
+
+The policy still has an effect here, as it determines which state-action pairs are visited; however, as long as all pairs continue to be updated, this converges to $q_*$.
+
+## Expected Sarsa
+What if we use the expected value instead of the maximum? This would take into account how likely each action is under the current policy, as in:
+$$Q(S_t, A_t) \leftarrow Q(S_t, A_t) + \alpha[R_{t+1} + \gamma \sum_a \pi(a \mid S_{t+1})Q(S_{t+1}, a) - Q(S_t, A_t)].$$
+This moves deterministically in the same direction as Sarsa moves in expectation – therefore it is called *expected Sarsa*.
+
+The advantage of expected Sarsa is that it eliminates variance due to the random selection of $A_{t+1}$. It generally performs better than Sarsa for the same experience. It can also work with $\alpha = 1$, while Sarsa suffers under larger values of $\alpha$.
+
+If $\pi$ is the greedy policy, but episodes are generated according to an exploratory policy $b$, then expected Sarsa is exactly Q-learning.
+
+## Maximization Bias and Double Learning
+We have implicitly assumed so far that the estimate of the true maximum can be taken to be the maximum of the estimates. However, this leads to a positive *maximization bias*.
+
+One way to avoid this bias is to divide the sample space of actions (plays). Suppose that we do this and obtain two independent estimates $Q_1(a)$ and $Q_2(a)$. Then we use one of these to determine the maximizing action, and the other to find its value. We can repeat this process in reverse as well.
+$$Q_2(A^*) = Q_2(\operatorname*{argmax}_a Q_1(a))$$
+$$Q_1(A^*) = Q_1(\operatorname*{argmax}_a Q_2(a))$$
+
+We therefore maintain two estimates of $Q$, and update each with a 50% probability at each timestep, using the other to find the value of the maximizing action. For example,
+$$Q_1(S_t, A_t) \leftarrow Q_1(S_t, A_t) + \alpha\left[R_{t+1} + \gamma Q_2\left(S_{t+1}, \operatorname*{argmax}_a Q_1(S_{t+1}, a)\right) - Q_1(S_t, A_t)\right].$$
+Thus the two approximations are treated completely symmetrically.
+
+The behaviour policy can be informed by both estimates; *e.g.*, it may be $\varepsilon$-greedy in $Q_1 + Q_2$. 
+
+Double learning can be applied to Sarsa and expected Sarsa as well.
+
+## Games, Afterstates and Other Special Cases
+In some cases, we have complete knowledge of the state of the system after taking a certain action in a certain state. Furthermore, many state-action pairs may lead to the same "afterstate," making it redundant to learn estimates for each of them separately. Thus it makes sense to estimate the value of these afterstates, instead of the current state or the state-action pairs. One common example of this is deterministic games like chess or tic-tac-toe.
+
+The principles developed above (GPI; on- or off-policy; double learning) apply equally to afterstate methods.
+
+# $n$-Step Bootstrapping
