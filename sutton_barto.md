@@ -34,6 +34,15 @@ numbersections: true
     - Policy Improvement
     - Policy Iteration
     - Value Iteration
+* Monte Carlo Methods
+    - MC (on-policy) Prediction
+        - Exploring Starts
+    - MC (on-policy) Control
+        - Without Exploring Starts
+    - Off-Policy Prediction
+        - Importance Sampling
+        - Incremental Implementation
+    - Off-Policy Control
 
 # Multi-Armed Bandits
 RL uses training information that provides evaluative rather than instructive feedback – this creates the need for exploration.  
@@ -228,3 +237,145 @@ Generalized policy iteration (GPI) refers to the general idea of letting policy-
 
 ## Efficiency of Dynamic Programming
 DP methods work in polynomial time (in the number of states and actions). This is much better than any direct search in policy space. Furthermore, they have wider applicability than linear programming methods.
+
+# Monte Carlo Methods
+Monte Carlo methods require experience in exchange for complete knowledge of environment.
+
+Here, we consider only episodic tasks, and updates occur only between episodes (not online). We only average complete returns (for methods that use partial returns, see next chapter).
+
+The problem here is now nonstationary, since the return after taking an action in one state depends on actions taken in later states of the same episode. Thus we adapt the idea of GPI to *learn* value functions from experience (rather than compute them from knowledge of the model).
+
+## Monte Carlo Prediction
+First, consider the state-value function. The obvious way to estimate it is to average the returns observed after visits to that state. This should converge to the expected value.
+
+The *first-visit MC method* estimates $v_\pi(s)$ as the average of returns following first visits to $s$ – thus a given episode supplies at most one value to the average.  
+The *every-visit MC method* estimates $v_\pi(s)$ as the average of returns following every visit to $s$; a given episode may supply any number of values to the average.
+
+These methods both rely on generating a complete episode, and looping through it backwards, accumulating the reward and checking the history appropriately.
+
+They both converge to $v_\pi(s)$ as the number of (first) visits goes to infinity.
+
+An important fact about MC methods is that they rely on independent estimates – they do not bootstrap like DP methods.  
+They are also independent of the number of states.
+
+## Monte Carlo Estimation of Action Values
+Without a model, state values alone are insufficient; therefore one of our primary goals is to estimate $q_*$.
+
+We have analogous methods to the state value function estimation in this case as well – first-visit and every-visit MC methods behave as expected.
+
+The only complication is that many state-action pairs may not be visited, as the $\mathcal{S} \times \mathcal{A}$ space is much greater. This is especially a problem in the case of deterministic policies.  
+This is the general problem of maintaining exploration, for which we have the assumption of *exploring starts* – we cause the episode to start in a state-action pair and ensure that any pair may be selected as the start.
+
+When learning from actual interaction, and not simulations, the exploring starts assumption is not useful; in this case, the most common approach is to consider only stochastic policies that assign nonzero probability to all actions.
+
+## Monte Carlo Control
+The overall idea is to proceed according to GPI; we maintain an approximate policy and an approximate value function, both of which are repeatedly updated.
+
+An MC version of classical policy iteration would complete each evaluation and improvement step before starting the next, alternately. Improvement is done by making the policy greedy, as before:
+$$\pi(s) = \operatorname*{argmax}_aq(s, a).$$
+
+This method is guaranteed to converge to the optimal policy.
+
+However, there are two unlikely assumptions: exploring starts, and infinitely long policy evaluation.
+
+For now, consider removing the second assumption. This is an issue even in DP methods, and, as in that case, we have two potential solutions:
+
+* compute error bounds in estimates and use as many episodes as it takes to push them below some threshold – this is unlikely to be feasible – or
+* the idea underlying GPI, which is to simply move the estimate towards $q_{\pi_k}$, but not get close until after several steps.
+
+An algorithm following the latter method would generate a whole episode, loop through it backwards, at each step updating $q_{\pi}(s, a)$ and $\pi(s)$.
+
+It is easy to see that if this method converges, the policy must be optimal.
+
+## Monte Carlo Control without Exploring Starts
+Now, we try to do away with the first assumption.
+
+The only way to ensure that all actions are selected infinitely often is for the agent to continue to select them; this is achieved by using *soft* policies, which have a nonzero probability assigned to each pair.
+
+Here, we consider $\varepsilon$-greedy policies. Thus the update procedure at the end of each episode is now
+$$
+\pi(a \mid S_t) = \begin{cases}
+1 - \varepsilon + \frac\varepsilon{|\mathcal{A}(S_t)|} & a = A^* \\
+\frac\varepsilon{|\mathcal{A}(S_t)|} & a \neq A^*.
+\end{cases}$$
+
+In all other aspects, the algorithm is identical to the one described in the previous section.
+
+The $\varepsilon$-greedy policy $\pi'$ is at least as good as $\pi$, which can be proved as follows:
+\begin{align*}
+q_\pi(s, \pi'(s)) &= \sum_a \pi'(a \mid s)q_\pi(s, a) \\
+&= \frac\varepsilon{|\mathcal{A}(s)|}\sum_a q_\pi(s,a) + (1-\varepsilon)\max_a q_\pi(s, a) \\
+&\geq \frac{\varepsilon}{|\mathcal{A}(s)|}\sum_aq_\pi(s,a) + (1-\varepsilon)\sum_a\frac{\pi(a \mid s) - \frac{\varepsilon}{|\mathcal{A}(s)|}}{1-\varepsilon}q_\pi(s,a) \\
+&= \frac\varepsilon{|\mathcal{A}(s)|}\sum_aq_\pi(s,a) - \frac\varepsilon{|\mathcal{A}(s)|}\sum_aq_\pi(s,a) + \sum_a \pi(a \mid s) q_\pi(s, a). \\
+&= v_\pi(s).
+\end{align*}
+
+Suppose that equality holds – we want to prove that $\pi$ and $\pi'$ are optimal.  
+Note that we are only considering optimality in the space of $\varepsilon$-soft policies. To operationalize this restriction, we consider a modified environment, which is identical to the old one except that, when an action $a$ is taken from a state $s$, then with probability $\varepsilon$, it repicks the action and implements that instead.  
+Thus, a policy $\pi$ is optimal among $\varepsilon$-soft policies iff it is optimal in this environment. Let the optimal functions of this environment be $\tilde{v}_*$ and $\tilde{q}_*$.A
+
+We know, by definition, that $\tilde{v}_*$ is the unique solution to
+\begin{align*}
+\tilde{v}_* = (1-\varepsilon)&\max_a \sum_{s', r}p(s', r \mid s, a)[r + \gamma \tilde{v}_*(s')] \\
++ &\frac\varepsilon{|\mathcal{A}(s)|}\sum_a \sum_{s', r} p(s', r \mid s, a)[r + \gamma \tilde{v}_*(s')].
+\end{align*}
+
+We know that
+$$q_\pi(s, a) = \sum_{s', r}p(s', r \mid s, a)[r + \gamma v_\pi(s')].$$
+Substituting this in the equality that we assumed for $v_\pi(s)$, we obtain the same equation. Since $\tilde{v}_*$ is the unique solution to this, we must have $\tilde{v}_* = v_\pi$.
+
+## Off-Policy Prediction via Importance Sampling
+All the methods we have seen so far are *on-policy* methods – they decide actions based on the same policy that is being improved. Methods that use a different policy to decide actions, or *off-policy* methods, are the focus of this section.
+
+The dilemma of learning control methods is to learn action values conditional on optimal behaviour, while maintaining suboptimal behaviour for the sake of exploration. This is the compromise of the previous section.  
+Off-policy methods use two policies – the target policy, being learned about, and the behaviour policy, used to direct the agent's exploration.
+
+Consider the prediction problem for off-policy methods. Here, both the target $\pi$ and behaviour $b$ policies are fixed. We have episodes following $b$, but not $\pi$.  
+A fundamental assumption here is the assumption of coverage:
+$$\pi(a \mid s) > 0 \implies b(a \mid s) > 0.$$
+This implies that $b$ must be stochastic in states where it is different from $\pi$, which may be deterministic.
+
+We utilize *importance sampling*, by weighting returns according to the relative probability of their trajectories occurring under $\pi$ and $b$. This value is
+$$\rho_{t:T-1} = \prod_{k=t}^{T-1}\frac{\pi(A_k \mid S_k)}{b(A_k \mid S_k)}.$$
+Each individual probability depends on the MDP parameters, but this cancels out in the ratio.
+
+We have that $\mean{}{G_t \mid S_t = s} = v_b(s)$, but we do not want this quantity; we want $v_\pi(s)$, which we obtain as
+$$\mean{}{\rho_{t:T-1}G_t \mid S_t = s} = v_\pi(s).$$
+
+Ordinary importance sampling simply averages the estimated returns
+$$V(s) = \frac{\sum_{t\in\mathcal{T}(s)}\rho_{t:T(t)-1}G_t}{|\mathcal{T}(s)|},$$
+where $\mathcal{T}(s)$ represents the set of timesteps that we are considering for state $s$. We may also use weighted importance sampling, which uses a weighted average
+$$V(s) = \frac{\sum_{t\in\mathcal{T}(s)}\rho_{t:T(t)-1}G_t}{\sum_{t\in\mathcal{T}(s)}\rho_{t:T(t)-1}}.$$
+
+In the first-visit case, o. importance sampling is unbiased, while w. importance sampling has a nonzero bias that converges asymptotically to zero.  
+On the other hand, o. importance sampling has unbounded variance, while the variance of w. importance sampling converges to zero.
+
+In the every-visit case, both methods are biased, although the bias still vanishes in the limit.
+
+## Incremental Implementation
+In the case of on-policy methods, the techniques used in previous chapters directly apply. Off-policy methods require separate consideration for o. and w. importance sampling.
+
+In the ordinary case, we can use incremental methods, but using scaled returns $\rho_{t:T(t)-1}$ instead of rewards as in Chapter 2.
+
+As, in w. importance sampling, we need a weighted average, the incremental algorithm has to be modified. This can be achieved with the update rules
+$$V_{n+1} = V_n + \frac{W_n}{C_n}[G_n - V_n]$$
+$$C_{n+1} = C_n + W_{n+1}$$
+where $C_0 = 0$ and $V_1$ is arbitrary. $G_n$ is the single additional return at each datapoint.
+
+## Off-Policy Monte Carlo Control
+An algorithm implementing all the ideas outlined above (off-policy learning, weighted importance sampling, and incremental implementation) would then proceed as follows.
+
+For a single episode, pick a soft policy $b$ that is nonzero wherever $\pi$ is nonzero. Generate an episode and loop backwards through it. Maintain $Q$ and $C$ as denoted above.  
+At each timestep $t$, update
+\begin{align*}
+G &\leftarrow \gamma G + R_{t+1} \\
+C(S_t, A_t) &\leftarrow C(S_t, A_t) + W \\
+Q(S_t, A_t) &\leftarrow Q(S_t, A_t) + \frac{W}{C(S_t, A_t)}[G - Q(S_t, A_t)] \\
+W &\leftarrow W\frac1{b(A_t \mid S_t)}
+\end{align*}
+Then, update $\pi$ according to the current estimate of $Q$.
+
+[didn't understand this part]  
+A potential problem with this method is that it only learns from the tails of episodes which only contain greedy actions. This can make learning extremely slow, particularly when nongreedy actions are common.
+
+# Temporal-Difference Learning
