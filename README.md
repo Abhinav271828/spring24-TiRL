@@ -102,6 +102,10 @@ Notes and resources for the Topics in Reinforcement Learning course at IIIT Hyde
             - Temporal Difference Prediction
         - Policy Improvement (contd.)
             - SARSA (On-Policy TD Control)
+* Lecture 14 (04 Mar, Mon)
+    - Continuous (Dynamical) Systems
+        - State Space of Dynamical Systems
+    - Linear Systems
 
 # Grading Policy
 * Quiz-1: 10%
