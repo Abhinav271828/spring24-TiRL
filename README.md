@@ -105,7 +105,15 @@ Notes and resources for the Topics in Reinforcement Learning course at IIIT Hyde
 * Lecture 14 (04 Mar, Mon)
     - Continuous (Dynamical) Systems
         - State Space of Dynamical Systems
-    - Linear Systems
+    - Properties of Systems
+        - Linearity
+* Lecture 15 (07 Mar, Thu)
+    - Properties of Systems (contd.)
+        - Time Invariance
+        - LTIV Systems
+            - Convolution Theorem
+            - General LTIV Response
+        - Controllability
 
 # Grading Policy
 * Quiz-1: 10%

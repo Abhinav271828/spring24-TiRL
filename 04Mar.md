@@ -14,11 +14,12 @@ $$\frac{dX}{dt} = \dot{X} = f(X, U).$$
 
 Examples of this include RLC circuits and spring-mass-damping systems.
 
-# Linear Systems
-**NB: This is not restricted to dynamical systems.**
-
+# Properties of Systems
+## Linearity
 A system is called linear if it satisfies superposition and homogeneity.
 
 A system obeys superposition if, for any inputs $u_1, u_2$ that have outputs $y_1(t), y_2(t)$ respectively, the input $u_1 + u_2$ will have the output $y_1(t) + y_2(t)$. For example, a system defined by
 $$\frac{dy}{dt} + ay = bu$$
 obeys superposition.
+
+A system is homogeneous if, for any input $u_1$ with output $y_1$, the input $a\cdot u_1$ has the output $a\cdot y_1$.
