@@ -114,6 +114,13 @@ Notes and resources for the Topics in Reinforcement Learning course at IIIT Hyde
             - Convolution Theorem
             - General LTIV Response
         - Controllability
+* Lecture 16 (11 Mar, Mon)
+    - Properties of Systems
+        - LTIV Response in Absence of Input
+        - Stability
+        - Controllability (contd.)
+    - Discrete-Time Systems
+    - Principle of Optimality
 
 # Grading Policy
 * Quiz-1: 10%
