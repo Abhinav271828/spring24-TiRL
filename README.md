@@ -120,7 +120,14 @@ Notes and resources for the Topics in Reinforcement Learning course at IIIT Hyde
         - Stability
         - Controllability (contd.)
     - Discrete-Time Systems
-    - Principle of Optimality
+    - Dynamic Programming
+        - Principle of Optimality
+* Lecture 17 (14 Mar, Thu)
+    - Dynamic Programming (contd.)
+        - Formulation
+* Lecture 18 (18 Mar, Mon)
+    - Dynamic Programming (contd.)
+        - Solution
 
 # Grading Policy
 * Quiz-1: 10%

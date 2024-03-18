@@ -2,8 +2,8 @@
 title: Topics in Reinforcement Learning
 subtitle: |
           | Spring 2024, IIIT Hyderabad
-          | 07 March, Thursday (Lecture 15)
-author: Taught by Prof. Tejas Bodas
+          | 11 March, Monday (Lecture 16)
+author: Taught by Prof. Harikumar Kandath
 ---
 
 # Properties of Systems
@@ -48,7 +48,8 @@ We write this as
 $$X(k+1) = A_dX(k) + B_dU(k),$$
 where $A_d, B_d$ are determined by the above relation.
 
-# Principle of Optimality
+# Dynamic Programming
+## Principle of Optimality
 An optimal trajectory has the property that, given initial conditions and control inputs over some initial period, the remaining control inputs are optimal.
 
 Essentially, any subsequence of controls in an optimal trajectory must be optimal for the state transition corresponding to that subsequence.

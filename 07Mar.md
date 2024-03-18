@@ -3,7 +3,7 @@ title: Topics in Reinforcement Learning
 subtitle: |
           | Spring 2024, IIIT Hyderabad
           | 07 March, Thursday (Lecture 15)
-author: Taught by Prof. Tejas Bodas
+author: Taught by Prof. Harikumar Kandath
 ---
 
 ## Time Invariance
